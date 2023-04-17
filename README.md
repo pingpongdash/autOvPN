@@ -43,19 +43,20 @@ PUBLIC_PORT="1194"
 
 4. Run `./startvpn` to start the OpenVPN server.
 5. Run `./addclient <client-name>` to generate an OpenVPN client configuration file for a new client.
-6. The client configuration file will be created in the `clients` directory.
-
-7. If you want to customize the default values used in the script, you can edit the `.defaults` file. Here are the default values:
-
-- PROTOCOL="udp": The protocol used by OpenVPN.
-- VPN_SERVER_ADDR="192.168.11.0": The IP address of the OpenVPN server.
-- VPN_SERVER_NETMASK="255.255.255.0": The netmask used by the OpenVPN server.
-- SERVER_PORT="1194": The port used by the OpenVPN server.
-- OVPN_SERVER_CONFIG_DIR="/etc/openvpn/server": The directory where the OpenVPN server configuration files are stored.
-- OVPN_CLIENTS_CONFIG_DIR="/etc/openvpn/clients": The directory where the OpenVPN client configuration files are stored.
-- SERVER_CONFIG_DIR="server": The name of the directory where the server-specific files are stored.
-- CLIENT_CONFIG_DIR="clients": The name of the directory where the client-specific files are stored.
-- ERSA_PATH="/usr/share/easy-rsa": The path to the directory containing the EasyRSA files.
+6. The client configuration file will be created in the `./<VPN name>/clients/<client-name>` directory.
+7. Securely transmit the created configuration file to the client using encrypted communication such as SFTP or SCP.
+8. If you want to customize the default values used in the script, you can edit the `.defaults` file. Here are the default values:
+```
+PROTOCOL="udp"               # The protocol used by OpenVPN.
+VPN_SERVER_ADDR="192.168.11.0"      # The IP address of the OpenVPN server.
+VPN_SERVER_NETMASK="255.255.255.0"  # The netmask used by the OpenVPN server.
+SERVER_PORT="1194"           # The port used by the OpenVPN server.
+OVPN_SERVER_CONFIG_DIR="/etc/openvpn/server"  # The directory where the OpenVPN server configuration files are stored.
+OVPN_CLIENTS_CONFIG_DIR="/etc/openvpn/clients" # The directory where the OpenVPN client configuration files are stored.
+SERVER_CONFIG_DIR="server"   # The name of the directory where the server-specific files are stored.
+CLIENT_CONFIG_DIR="clients"  # The name of the directory where the client-specific files are stored.
+ERSA_PATH="/usr/share/easy-rsa"  # The path to the directory containing the EasyRSA files.
+```
 
 ## Contributors
 
