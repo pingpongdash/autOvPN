@@ -13,8 +13,6 @@ services:
         RUN_GID         : ${RUN_GID}
         RUN_USER        : ${RUN_USER}
         RUN_GROUP       : ${RUN_GROUP}
-        VPN_SERVER_ADDR : ${VPN_SERVER_ADDR}
-        OVPN_NATDEVICE  : ${OVPN_NATDEVICE}
     volumes:
       - type : bind
         source : ${HOST_SERVER_CONF}

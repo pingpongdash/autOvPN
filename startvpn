@@ -1,38 +1,60 @@
 #!/bin/bash
+############################################################
+# startvpn
+# This script is used to start an OpenVPN Docker container.
+############################################################
 
-source ./.defauts
+source ./.defaults
 source ./settings
 
 LOCAL_DIRS=true
-COMPSER_DIR=true
 
-if [ -d $VPN_NAME ] ; then
-    echo Server directory already exists.
-    LOCAL_DIRS=false
+COMPSER_DIR=$VPN_NAME/composer
+
+echo "Let's start the $VPN_NAME server!"
+echo -n "checking server configuration directory...."
+
+if [ -d $VPN_NAME/$SERVER_CONFIG_DIR  ] ; then
+    echo -e "exists.\n"
 else
+    echo -e "\n"
+    echo "$VPN_NAME not exists. creating server configuration directory."
     mkdir -p $VPN_NAME/$SERVER_CONFIG_DIR
-    mkdir -p $VPN_NAME/$CLIENT_CONFIG_DIR
-    cd $VPN_NAME
-    LOCAL_VOLUME=$(pwd)
-    echo $LOCAL_VOLUME
-fi
-
-if [ -d $VPN_NAME/composer ] ; then
-    echo composer directory already exists.
-    COMPSER_DIR=false
-fi
-
-if "${COMPSER_DIR}" && "${LOCAL_DIRS}" ; then
-    cd ..
-    echo "operation start."
-    echo $(pwd)
     cp .templates/ovpnvars $(pwd)/$VPN_NAME/server/vars
+    LOCAL_VOLUME=$(pwd)/$VPN_NAME/$SERVER_CONFIG_DIR
+    echo -e "server configuration directory is \n$LOCAL_VOLUME"
+fi
 
-    CONFIG_DIR=`echo $(pwd)/$VPN_NAME/$SERVER_CONFIG_DIR | sed -e "s/\//\\\\\\\\\//g"`
-    echo $CONFIG_DIR
-    CLIENT_DIR=`echo $(pwd)/$VPN_NAME/$CLIENT_CONFIG_DIR | sed -e "s/\//\\\\\\\\\//g"`
-    echo $CLIENT_DIR
+if [ -d $VPN_NAME/$CLIENT_CONFIG_DIR ] ; then
+    echo -e "exists.\n"
+else
+    echo -e "\n"
+    echo "$VPN_NAME not exists. creating server configuration directory."
+    mkdir -p $VPN_NAME/$CLIENT_CONFIG_DIR
+    LOCAL_VOLUME=$(pwd)/$VPN_NAME/$SERVER_CONFIG_DIR
+    echo -e "server configuration directory is \n$LOCAL_VOLUME"
+fi
 
+echo -n "checking composer directory...."
+if [ -d $VPN_NAME/composer ] ; then
+    echo -e "exists.\n"
+else
+    echo "The configuration files for $VPN_NAME will be created in the following directory."
+    echo -e "\ncomposer does not exist. creating composer directory."
+    cp -r .templates/composer $VPN_NAME/.
+    echo "composer directory is created."
+fi
+
+echo "operation start."
+
+CONFIG_DIR=`echo $(pwd)/$VPN_NAME/$SERVER_CONFIG_DIR | sed -e "s/\//\\\\\\\\\//g"`
+CLIENT_DIR=`echo $(pwd)/$VPN_NAME/$CLIENT_CONFIG_DIR | sed -e "s/\//\\\\\\\\\//g"`
+
+echo -n "checking docker-compose.yml...."
+if [ -d $VPN_NAME/composer/docker-compose.yml ] ; then
+    echo "exists\n"
+else
+    echo "\ncreating composer."
     cp -r .templates/composer $VPN_NAME/.
     sed -i -e "s/CANGEME_SERVICE_NAME/$VPN_NAME/g"    $VPN_NAME/composer/docker-compose.yml
     sed -i -e "s/CHANGEME_SERVER_CONF/$CONFIG_DIR/g"  $VPN_NAME/composer/envvars
@@ -44,13 +66,25 @@ if "${COMPSER_DIR}" && "${LOCAL_DIRS}" ; then
     sed -i -e "s/CHANGEME_PUBLIC_PORT/$PUBLIC_PORT/g" $VPN_NAME/composer/envvars
     sed -i -e "s/CHANGEME_PROTOCOL/$PROTOCOL/g"       $VPN_NAME/composer/envvars
     sed -i -e "s/CHANGEME_ALLOW_INTERNET_ACCESS/$ALLOW_INTERNET_ACCESS/g"       $VPN_NAME/composer/envvars
-
     echo "RUN_USER  = \"$(id -u -n)\"" >> $VPN_NAME/composer/envvars
     echo "RUN_UID   = \"$(id -u)\""    >> $VPN_NAME/composer/envvars
     echo "RUN_GROUP = \"$(id -u -n)\"" >> $VPN_NAME/composer/envvars
     echo "RUN_GID   = \"$(id -g)\""    >> $VPN_NAME/composer/envvars
 fi
 
+echo "Starting the container now."
+
 docker-compose -f $VPN_NAME/composer/docker-compose.yml \
     --env-file $VPN_NAME/composer/envvars up \
     --build --force-recreate -d
+
+echo -n "Waiting for server configuration...."
+while [ ! -f "$VPN_NAME/$SERVER_CONFIG_DIR/server.conf" ]; do
+  echo -n "."
+  sleep 1
+done
+echo -e "\n complete!"
+
+echo "Congratulations!"
+echo "The configuration of the OpenVPN server is complete."
+echo "Please run ./addclient <clientname> to add a new client."

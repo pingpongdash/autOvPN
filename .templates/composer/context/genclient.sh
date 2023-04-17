@@ -17,8 +17,6 @@ cd $EASYRSA_WORK_DIR
 easyrsa gen-req  $CLIENT_NAME nopass batch
 easyrsa sign-req client $CLIENT_NAME
 
-cp $OVPN_CONFIG_DIR/ca.crt $OVPN_CLIENTS_DIR/$CLIENT_NAME/.
-cp $OVPN_CONFIG_DIR/ta.key $OVPN_CLIENTS_DIR/$CLIENT_NAME/.
 cp $EASYRSA_WORK_DIR/pki/private/$CLIENT_NAME.key $OVPN_CLIENTS_DIR/$CLIENT_NAME/.
 cp $EASYRSA_WORK_DIR/pki/issued/$CLIENT_NAME.crt  $OVPN_CLIENTS_DIR/$CLIENT_NAME/.
 
@@ -41,9 +39,9 @@ EOF
 
 cd $OVPN_CLIENTS_DIR/$CLIENT_NAME
 
-echo "<ca>"  >> $OVPN
-cat ca.crt   >> $OVPN
-echo "</ca>" >> $OVPN
+echo "<ca>"                 >> $OVPN
+cat $OVPN_CONFIG_DIR/ca.crt >> $OVPN
+echo "</ca>"                >> $OVPN
 
 echo "<cert>"        >> $OVPN
 cat $CLIENT_NAME.crt >> $OVPN
@@ -53,13 +51,12 @@ echo "<key>"         >> $OVPN
 cat $CLIENT_NAME.key >> $OVPN
 echo "</key>"        >> $OVPN
 
-echo "<tls-auth>"  >> $OVPN
-cat ta.key         >> $OVPN
-echo "</tls-auth>" >> $OVPN
+echo "<tls-auth>"           >> $OVPN
+cat $OVPN_CONFIG_DIR/ta.key >> $OVPN
+echo "</tls-auth>"          >> $OVPN
 
 chown -R  $RUN_UID:$RUN_GID $OVPN_CLIENTS_DIR/$CLIENT_NAME
 
-rm -f $OVPN_CLIENTS_DIR/CLIENT_NAME/ca.crt
-rm -f $OVPN_CLIENTS_DIR/$CLIENT_NAME/ta.key
-rm -f $OVPN_CLIENTS_DIR/$CLIENT_NAME/$CLIENT_NAME.key
-rm -f $OVPN_CLIENTS_DIR/$CLIENT_NAME/$CLIENT_NAME.crt
+
+rm -f $CLIENT_NAME.key
+rm -f $CLIENT_NAME.crt

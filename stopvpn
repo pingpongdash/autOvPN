@@ -1,7 +1,15 @@
 #!/bin/bash
+############################################################
+# stopvpn
+# This script is used to stop a running Docker container.
+############################################################
 
-echo $1
 
-docker-compose -f $1/composer/docker-compose.yml \
-    --env-file $1/composer/envvars \
+source ./.defaults
+source ./settings
+
+echo "Shutting down $VPN_NAME."
+
+docker-compose -f $VPN_NAME/composer/docker-compose.yml \
+    --env-file $VPN_NAME/composer/envvars \
     down --rmi all

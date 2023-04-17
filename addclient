@@ -1,6 +1,41 @@
 #!/bin/bash
 
-source ./.defauts
+source ./.defaults
 source ./settings
 
-docker exec -d $VPN_NAME genclient $1
+if [ ! -f "$VPN_NAME/$SERVER_CONFIG_DIR/server.conf" ]; then
+    echo "The server is not ready."
+    echo "Please check the existence of $VPN_NAME/$SERVER_CONFIG_DIR/server.conf".
+    exit 1
+fi
+
+
+CLIENT_NAME=""
+
+if [ -n "$1" ]; then
+    CLIENT_NAME=$1
+    # echo "generating $CLIENT_NAME.ovpn."
+else
+    read -p "Input client name : " CLIENT_NAME
+fi
+
+echo "generating $CLIENT_NAME for $VPN_NAME"
+
+
+docker exec -d $VPN_NAME genclient.sh $CLIENT_NAME
+
+echo -n "generating...."
+while [ ! "$(ls -1 $VPN_NAME/$CLIENT_CONFIG_DIR/$CLIENT_NAME/*.ovpn 2>/dev/null | wc -l)" -gt 0 ]; do
+    echo -n "."
+    sleep 1
+done
+
+OVPN=$(basename $(ls $VPN_NAME/$CLIENT_CONFIG_DIR/$CLIENT_NAME/*.ovpn ))
+OVPN_PATH=$VPN_NAME/$CLIENT_CONFIG_DIR/$CLIENT_NAME
+
+echo -e "\ncomplete!\n"
+
+echo "Configuration file $OVPN has been successfully created at the following location:"
+echo -e "$(tput setaf 2)$OVPN_PATH/$OVPN$(tput sgr0).\n"
+echo -e "$(tput setaf 3)This file contains sensitive information and should be securely provided to the client.$(tput sgr0)\n\n"
+echo "Have a happy hacking!"

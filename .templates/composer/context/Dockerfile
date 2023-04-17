@@ -24,9 +24,9 @@ RUN apk add --no-cache shadow vim sudo bash \
 RUN adduser -D -u ${RUN_UID} -s /bin/bash -G wheel ${RUN_USER}
 
 RUN  mkdir /etc/openvpn/server
-COPY startvpn.sh /usr/local/bin/startvpn.sh
-COPY genovpn.sh  /usr/local/bin/genclient
+COPY startvpn.sh  /usr/local/bin/startvpn.sh
+COPY genclient.sh /usr/local/bin/genclient.sh
 RUN  chmod +x    /usr/local/bin/startvpn.sh
-RUN  chmod +x    /usr/local/bin/genclient
+RUN  chmod +x    /usr/local/bin/genclient.sh
 
 ENTRYPOINT ["/usr/local/bin/startvpn.sh"]
