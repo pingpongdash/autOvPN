@@ -4,11 +4,11 @@
 
 ####
 # Set your desired VPN name (e.g. MyVPN)
-VPN_NAME="Your-vpn-name"
+VPN_NAME="sirius-vpn"
 
 ####
 # Enter your server's public URL or IP address
-SERVER_URL="your-url-or-ip-addr"
+SERVER_URL="34.205.243.190"
 
 ####
 # Set to 'yes' if you want clients to have internet access through the VPN, 'no' otherwise
