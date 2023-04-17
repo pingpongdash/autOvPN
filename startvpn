@@ -1,0 +1,56 @@
+#!/bin/bash
+
+source ./.defauts
+source ./settings
+
+LOCAL_DIRS=true
+COMPSER_DIR=true
+
+if [ -d $VPN_NAME ] ; then
+    echo Server directory already exists.
+    LOCAL_DIRS=false
+else
+    mkdir -p $VPN_NAME/$SERVER_CONFIG_DIR
+    mkdir -p $VPN_NAME/$CLIENT_CONFIG_DIR
+    cd $VPN_NAME
+    LOCAL_VOLUME=$(pwd)
+    echo $LOCAL_VOLUME
+fi
+
+if [ -d $VPN_NAME/composer ] ; then
+    echo composer directory already exists.
+    COMPSER_DIR=false
+fi
+
+if "${COMPSER_DIR}" && "${LOCAL_DIRS}" ; then
+    cd ..
+    echo "operation start."
+    echo $(pwd)
+    cp .templates/ovpnvars $(pwd)/$VPN_NAME/server/vars
+
+    CONFIG_DIR=`echo $(pwd)/$VPN_NAME/$SERVER_CONFIG_DIR | sed -e "s/\//\\\\\\\\\//g"`
+    echo $CONFIG_DIR
+    CLIENT_DIR=`echo $(pwd)/$VPN_NAME/$CLIENT_CONFIG_DIR | sed -e "s/\//\\\\\\\\\//g"`
+    echo $CLIENT_DIR
+
+    cp -r .templates/composer $VPN_NAME/.
+    sed -i -e "s/CANGEME_SERVICE_NAME/$VPN_NAME/g"    $VPN_NAME/composer/docker-compose.yml
+    sed -i -e "s/CHANGEME_SERVER_CONF/$CONFIG_DIR/g"  $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_CLIENTS_CONF/$CLIENT_DIR/g" $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_HOST_WEBAPP/$VPN_NAME/g"    $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_SERVER_URL/$SERVER_URL/g"   $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_VPN_SERVER_ADDR/$VPN_SERVER_ADDR/g"       $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_VPN_SERVER_NETMASK/$VPN_SERVER_NETMASK/g" $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_PUBLIC_PORT/$PUBLIC_PORT/g" $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_PROTOCOL/$PROTOCOL/g"       $VPN_NAME/composer/envvars
+    sed -i -e "s/CHANGEME_ALLOW_INTERNET_ACCESS/$ALLOW_INTERNET_ACCESS/g"       $VPN_NAME/composer/envvars
+
+    echo "RUN_USER  = \"$(id -u -n)\"" >> $VPN_NAME/composer/envvars
+    echo "RUN_UID   = \"$(id -u)\""    >> $VPN_NAME/composer/envvars
+    echo "RUN_GROUP = \"$(id -u -n)\"" >> $VPN_NAME/composer/envvars
+    echo "RUN_GID   = \"$(id -g)\""    >> $VPN_NAME/composer/envvars
+fi
+
+docker-compose -f $VPN_NAME/composer/docker-compose.yml \
+    --env-file $VPN_NAME/composer/envvars up \
+    --build --force-recreate -d

@@ -1,0 +1,19 @@
+################
+## settins
+################
+
+####
+# Set your desired VPN name (e.g. MyVPN)
+VPN_NAME="Your-vpn-name"
+
+####
+# Enter your server's public URL or IP address
+SERVER_URL="your-url-or-ip-addr"
+
+####
+# Set to 'yes' if you want clients to have internet access through the VPN, 'no' otherwise
+ALLOW_INTERNET_ACCESS="yes"
+
+####
+# The port to be used for the VPN (default is 1194)
+PUBLIC_PORT="1194"

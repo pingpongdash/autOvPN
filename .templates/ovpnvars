@@ -1,0 +1,17 @@
+if [ -z "$EASYRSA_CALLER" ]; then
+    echo "You appear to be sourcing an Easy-RSA 'vars' file." >&2
+    echo "This is no longer necessary and is disallowed. See the section called" >&2
+    echo "'How to use this file' near the top comments for more details." >&2
+    return 1
+fi
+
+set_var EASYRSA_BATCH "1"
+set_var EASYRSA_REQ_COUNTRY "US"
+set_var EASYRSA_REQ_PROVINCE "PROVINCE"
+set_var EASYRSA_REQ_CITY "CITY"
+set_var EASYRSA_REQ_ORG "ORG"
+set_var EASYRSA_REQ_EMAIL "email"
+set_var EASYRSA_REQ_OU "developers"
+set_var EASYRSA_CERT_EXPIRE 365
+set_var EASYRSA_CRL_DAYS 365
+set_var EASYRSA_DIGEST "sha512"

@@ -1,0 +1,10 @@
+PROTOCOL="udp"
+VPN_SERVER_ADDR="192.168.11.0"
+VPN_SERVER_NETMASK="255.255.255.0"
+SERVER_PORT="1194"
+OVPN_SERVER_CONFIG_DIR="/etc/openvpn/server"
+OVPN_CLIENTS_CONFIG_DIR="/etc/openvpn/clients"
+SERVER_CONFIG_DIR="server"
+CLIENT_CONFIG_DIR="clients"
+ERSA_PATH="/usr/share/easy-rsa"
+

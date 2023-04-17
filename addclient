@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source ./.defauts
+source ./settings
+
+docker exec -d $VPN_NAME genclient $1

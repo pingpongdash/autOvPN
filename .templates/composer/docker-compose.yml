@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+
+  CANGEME_SERVICE_NAME :
+    hostname      : ${HOST_WEBAPP}
+    container_name: ${HOST_WEBAPP}
+    image         : ${HOST_WEBAPP}
+    build:
+      context: ./context
+      args:
+        RUN_UID         : ${RUN_UID}
+        RUN_GID         : ${RUN_GID}
+        RUN_USER        : ${RUN_USER}
+        RUN_GROUP       : ${RUN_GROUP}
+        VPN_SERVER_ADDR : ${VPN_SERVER_ADDR}
+        OVPN_NATDEVICE  : ${OVPN_NATDEVICE}
+    volumes:
+      - type : bind
+        source : ${HOST_SERVER_CONF}
+        target : ${OVPN_CONFIG_DIR}
+      - type : bind
+        source : ${HOST_CLIENTS_CONF}
+        target : ${OVPN_CLIENTS_DIR}
+      - type : bind
+        source : ${DEV_DIR}
+        target : ${DEV_DIR}
+
+    environment:
+        RUN_UID            : ${RUN_UID}
+        RUN_GID            : ${RUN_GID}
+        RUN_USER           : ${RUN_USER}
+        RUN_GROUP          : ${RUN_GROUP}
+        VPN_PORT           : ${VPN_PORT}
+        VPN_SERVER_ADDR    : ${VPN_SERVER_ADDR}
+        OVPN_NATDEVICE     : ${OVPN_NATDEVICE}
+        OVPN_CONFIG_DIR    : ${OVPN_CONFIG_DIR}
+        EASYRSA_PATH       : ${EASYRSA_PATH}
+        EASYRSA_WORK_DIR   : ${EASYRSA_WORK_DIR}
+        SERVER_PORT        : ${SERVER_PORT}
+        VPN_PROTOCOL       : ${VPN_PROTOCOL}
+        SERVER_ADDRS       : ${SERVER_ADDRS}
+        VPN_SERVER_NETMASK : ${VPN_SERVER_NETMASK}
+        PROTOCOL           : ${PROTOCOL}
+        OVPN_CLIENTS_DIR   : ${OVPN_CLIENTS_DIR}
+        HOST_URL           : ${HOST_URL}
+        PUBLIC_PORT        : ${PUBLIC_PORT}
+        ALLOW_INTERNET_ACCESS : ${ALLOW_INTERNET_ACCESS}
+    sysctls:
+        net.ipv4.ip_forward               : 1
+        net.netfilter.nf_conntrack_helper : 1
+
+    tty: true
+    restart: always
+    expose:
+      - ${VPN_PORT}
+    ports:
+      - "${PUBLIC_PORT}:${VPN_PORT}/${PROTOCOL}"
+
+    cap_add:
+      - NET_ADMIN
+
+    # networks:
+    #   - default
+# networks:
+#   default:
+#     external:
+#       name: bridge
