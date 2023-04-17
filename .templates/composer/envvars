@@ -24,4 +24,4 @@ SERVER_PORT  = port ${VPN_PORT}
 VPN_PROTOCOL = proto ${PROTOCOL}
 SERVER_ADDRS = server ${VPN_SERVER_ADDR}/${VPN_SERVER_NETMASK}
 
-#####################################
+

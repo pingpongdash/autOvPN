@@ -1,10 +1,11 @@
-PROTOCOL="udp"
-VPN_SERVER_ADDR="192.168.11.0"
-VPN_SERVER_NETMASK="255.255.255.0"
-SERVER_PORT="1194"
-OVPN_SERVER_CONFIG_DIR="/etc/openvpn/server"
-OVPN_CLIENTS_CONFIG_DIR="/etc/openvpn/clients"
-SERVER_CONFIG_DIR="server"
-CLIENT_CONFIG_DIR="clients"
-ERSA_PATH="/usr/share/easy-rsa"
+# Default values used by the script. You can edit them if you want.
 
+PROTOCOL="udp"               # The protocol used by OpenVPN.
+VPN_SERVER_ADDR="192.168.11.0"      # The IP address of the OpenVPN server.
+VPN_SERVER_NETMASK="255.255.255.0"  # The netmask used by the OpenVPN server.
+SERVER_PORT="1194"           # The port used by the OpenVPN server.
+OVPN_SERVER_CONFIG_DIR="/etc/openvpn/server"  # The directory where the OpenVPN server configuration files are stored.
+OVPN_CLIENTS_CONFIG_DIR="/etc/openvpn/clients" # The directory where the OpenVPN client configuration files are stored.
+SERVER_CONFIG_DIR="server"   # The name of the directory where the server-specific files are stored.
+CLIENT_CONFIG_DIR="clients"  # The name of the directory where the client-specific files are stored.
+ERSA_PATH="/usr/share/easy-rsa"  # The path to the directory containing the EasyRSA files.
