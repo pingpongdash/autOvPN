@@ -16,4 +16,4 @@ ALLOW_INTERNET_ACCESS="yes"
 
 ####
 # The port to be used for the VPN (default is 1194)
-PUBLIC_PORT="1194
+PUBLIC_PORT="1194"
